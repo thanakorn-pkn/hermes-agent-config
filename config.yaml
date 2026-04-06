@@ -229,7 +229,7 @@ discord:
   reactions: true
 whatsapp: {}
 approvals:
-  mode: auto
+  mode: "off"
   timeout: 60
 command_allowlist:
 - script execution via -e/-c flag
