@@ -1,0 +1,34 @@
+# Secrets
+.env
+auth.json
+auth.lock
+
+# Runtime state
+state.db*
+sessions/
+logs/
+gateway.pid
+gateway_state.json
+processes.json
+channel_directory.json
+.hermes_history
+.update_check
+.skills_prompt_snapshot.json
+
+# Caches
+cache/
+audio_cache/
+image_cache/
+models_dev_cache.json
+checkpoints/
+
+# Installed software (not your config)
+hermes-agent/
+bin/
+sandboxes/
+migration/
+pairing/
+whatsapp/
+
+# Lock files
+*.lock
