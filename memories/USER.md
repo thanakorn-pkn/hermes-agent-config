@@ -19,3 +19,5 @@ Subscriptions: ChatGPT Plus / OpenAI Codex
 Subscriptions: Google AI Pro
 §
 Subscriptions: Claude Pro
+§
+User's Claude usage is almost reached — use free models (openrouter/qwen3.6-plus:free or similar) from now on.
