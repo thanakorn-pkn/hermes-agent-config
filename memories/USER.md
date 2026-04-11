@@ -6,7 +6,7 @@ Identity: Timezone: Asia/Bangkok
 §
 Identity: Telegram: `@ThanakornPKN`
 §
-Preferences: Compact answers first; expand on request.
+Preferences: Prefer short, summarized answers by default; provide detailed answers when asked.
 §
 Preferences: Python-first data engineer at KKP.
 §
@@ -23,3 +23,5 @@ Subscriptions: Claude Pro
 User's Claude usage is almost reached — use free models (openrouter/qwen3.6-plus:free or similar) from now on.
 §
 Preference: When asking to change Hermes behavior/settings, Bank wants actual Hermes config changes rather than saving the preference to memory/context.
+§
+For discovery tasks, Bank prefers Gemini first and Claude Sonnet as fallback if Gemini is unavailable.
