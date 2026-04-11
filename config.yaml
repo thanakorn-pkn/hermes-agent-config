@@ -237,9 +237,7 @@ whatsapp: {}
 approvals:
   mode: 'off'
   timeout: 60
-command_allowlist:
-- script execution via -e/-c flag
-- force kill processes
+command_allowlist: []
 quick_commands: {}
 personalities: {}
 security:
