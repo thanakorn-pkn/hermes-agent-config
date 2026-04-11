@@ -729,6 +729,32 @@ Use `/context` in interactive mode to see a colored grid of context usage. Key t
 10. **Slash commands (like `/commit`) only work in interactive mode** — in `-p` mode, describe the task in natural language instead.
 11. **`--bare` skips OAuth** — requires `ANTHROPIC_API_KEY` env var or an `apiKeyHelper` in settings.
 12. **Context degradation is real** — AI output quality measurably degrades above 70% context window usage. Monitor with `/context` and proactively `/compact`.
+13. **Shell interpolation can corrupt long prompts** — when calling `claude -p "..."` through a shell, backticks, `$(...)`, `<angle brackets>`, pipes, and embedded quotes inside the prompt may be interpreted by bash before Claude sees them. For complex prompts, avoid inline double-quoted strings.
+
+### Safe Prompt Injection Patterns
+
+**Best for complex prompts:** write the prompt to a temp file, then pass it safely:
+```
+write_file("/tmp/claude-prompt.txt", "...full prompt with backticks, quotes, <placeholders>, etc...")
+terminal(command="claude -p \"$(cat /tmp/claude-prompt.txt)\" --output-format json", timeout=120)
+```
+
+**Safer shell quoting:** prefer single quotes around the outer shell string when possible:
+```
+terminal(command='claude -p '\''Review this plan. Keep literal text like `code`, <PLACEHOLDER>, and $(example) untouched.'\'' --output-format json', timeout=120)
+```
+
+**If the prompt is very long or contains lots of special characters:** use a temporary file plus Python for robust argument passing:
+```
+write_file("/tmp/claude-prompt.txt", "...prompt...")
+terminal(command="python3 - <<'PY'
+import subprocess
+prompt = open('/tmp/claude-prompt.txt').read()
+subprocess.run(['claude', '-p', prompt, '--output-format', 'json'], check=True)
+PY", timeout=120)
+```
+
+Use these patterns whenever the prompt includes shell-sensitive syntax, code fences, XML/HTML-ish placeholders, or command examples.
 
 ## Rules for Hermes Agents
 
