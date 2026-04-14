@@ -1,4 +1,42 @@
 {
-  "jobs": [],
-  "updated_at": "2026-04-06T15:50:21.404066+07:00"
+  "jobs": [
+    {
+      "id": "98afbcedced1",
+      "name": "gemini-3am-config-review",
+      "prompt": "Run this command exactly once and wait for it to finish:\n\npython3 /home/tphat/.hermes/scripts/gemini_repo_review.py\n\nThat script already uses Gemini CLI to review the following git repos and, when safe, stage, commit, and push changes:\n- /home/tphat/.openclaw\n- /home/tphat/.hermes\n- /data/syncthing/obsidian-second-brain\n\nAfter the command finishes:\n- If it succeeds, summarize the JSON results concisely for the user.\n- If any repo reports an error or the command exits non-zero, clearly report the failure and include the relevant error text.\n- Mention when a repo was intentionally skipped for safety.\n- Do not inspect .env files or credential files.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 3 * * *",
+        "display": "0 3 * * *"
+      },
+      "schedule_display": "0 3 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-04-14T22:25:07.624978+07:00",
+      "next_run_at": "2026-04-16T03:00:00+07:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "6538865360",
+        "chat_name": "Thanakorn Phattarapakorn",
+        "thread_id": null
+      }
+    }
+  ],
+  "updated_at": "2026-04-15T03:00:24.446778+07:00"
 }

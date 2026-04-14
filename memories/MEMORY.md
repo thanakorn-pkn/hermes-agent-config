@@ -1,4 +1,4 @@
-Obsidian vault path: /srv/syncthing/obsidian-second-brain (called "second-brain"). Use this for documenting knowledge, references, and project docs. Set OBSIDIAN_VAULT_PATH to this path.
+Obsidian vault path: /data/syncthing/obsidian-second-brain (called "second-brain"). Use this for documenting knowledge, references, and project docs. Set OBSIDIAN_VAULT_PATH to this path.
 §
 User packages installed via pnpm, not npm. User installs Python packages via uv, not pip.
 §
@@ -11,3 +11,5 @@ Homelab: nuc-13-pro has LAN IP 192.168.1.161. Uses k3s with Traefik reverse prox
 Paperclip preferred architecture for homelab: Postgres 17 as standalone Podman quadlet container (port 5432 published), Paperclip app runs directly on host via systemd service using `pnpm dev:once`. This gives the app direct access to host CLIs (Claude Code, Codex, Gemini, Hermes) without bind-mount complexity.
 §
 When running `pnpm dev:once` in a systemd service (non-interactive), you MUST set `Environment=npm_config_tailscale_auth=true` — otherwise Paperclip defaults to `local_trusted` mode and refuses `0.0.0.0` binding with error "local_trusted mode requires loopback host binding". This env var triggers `authenticated` mode in dev-runner.ts.
+§
+Mission Control preference: Bank intends it as a solo-user self-hosted entrypoint for custom services, prioritizing low maintenance, agent-task visibility, homelab-only operation, and minimal token/cost overhead; compatible with Hermes/OpenClaw.

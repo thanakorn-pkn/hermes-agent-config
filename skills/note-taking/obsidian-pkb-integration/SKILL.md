@@ -9,13 +9,13 @@ Use this when a user has an Obsidian-based PKB and wants Hermes to treat it as a
 
 ## Goal
 
-Make Hermes PKB-aware by default for the user's vault at `/srv/syncthing/obsidian-second-brain` while keeping the vault itself as the source of truth for governance, roles, and workflows.
+Make Hermes PKB-aware by default for the user's vault at `/data/syncthing/obsidian-second-brain` while keeping the vault itself as the source of truth for governance, roles, and workflows.
 
 ## Installed vault target
 
-This bridge skill is wired to the Obsidian vault at `/srv/syncthing/obsidian-second-brain`.
+This bridge skill is wired to the Obsidian vault at `/data/syncthing/obsidian-second-brain`.
 
-- `OBSIDIAN_VAULT_PATH` should point to `/srv/syncthing/obsidian-second-brain`
+- `OBSIDIAN_VAULT_PATH` should point to `/data/syncthing/obsidian-second-brain`
 - Treat that path as the default PKB unless the user explicitly overrides it
 - Use Obsidian-compatible Markdown and wikilinks (`[[Note Name]]`) when reading or writing vault content
 
@@ -23,24 +23,24 @@ This bridge skill is wired to the Obsidian vault at `/srv/syncthing/obsidian-sec
 
 Before major PKB work, Hermes should:
 
-1. Read `/srv/syncthing/obsidian-second-brain/AGENTS.md`
-2. Read `/srv/syncthing/obsidian-second-brain/README.md`
-3. Read `/srv/syncthing/obsidian-second-brain/INDEX.md`
+1. Read `/data/syncthing/obsidian-second-brain/AGENTS.md`
+2. Read `/data/syncthing/obsidian-second-brain/README.md`
+3. Read `/data/syncthing/obsidian-second-brain/INDEX.md`
 
-If `INDEX.md` is empty, missing useful navigation, or otherwise insufficient for the task, fall back to direct search/scan in `/srv/syncthing/obsidian-second-brain/30_resources/`.
+If `INDEX.md` is empty, missing useful navigation, or otherwise insufficient for the task, fall back to direct search/scan in `/data/syncthing/obsidian-second-brain/30_resources/`.
 
-- Exclude `/srv/syncthing/obsidian-second-brain/30_resources/_sources/` from that fallback search unless the task is source lookup, ingest, or provenance validation
+- Exclude `/data/syncthing/obsidian-second-brain/30_resources/_sources/` from that fallback search unless the task is source lookup, ingest, or provenance validation
 - Prefer updating existing notes over creating duplicates
 - Route persistence by default to `10_projects/` for project/task notes, `30_resources/` for reusable knowledge/reference/synthesis, and `00_inbox/` for rough capture
 - Use the vault workflow skill files as the source of truth for detailed procedures instead of restating them here
 
 Relevant vault workflow skills:
 
-- `/srv/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/write/SKILL.md`
-- `/srv/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/query/SKILL.md`
-- `/srv/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/ingest/SKILL.md`
-- `/srv/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/lint/SKILL.md`
-- `/srv/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/release/SKILL.md`
+- `/data/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/write/SKILL.md`
+- `/data/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/query/SKILL.md`
+- `/data/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/ingest/SKILL.md`
+- `/data/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/lint/SKILL.md`
+- `/data/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills/knowledge-management/release/SKILL.md`
 
 ## Recommended architecture
 
@@ -63,7 +63,7 @@ Vault files are passive unless Hermes is explicitly pointed at them through a br
 
 ## Integration steps
 
-1. Use the vault root path `/srv/syncthing/obsidian-second-brain`.
+1. Use the vault root path `/data/syncthing/obsidian-second-brain`.
    - `OBSIDIAN_VAULT_PATH` should point to this exact location.
 2. Verify the vault has these core files:
    - `README.md`
@@ -72,7 +72,14 @@ Vault files are passive unless Hermes is explicitly pointed at them through a br
 3. Inspect the actual location of vault workflow skills.
    - Do not trust documentation blindly; confirm the real path in the vault.
 4. Patch the installed Hermes bridge skill so it explicitly points at this vault and loads the vault context by default.
-5. In that bridge skill, instruct Hermes to:
+5. Persist the default behavior in Hermes config, not only in memory.
+   - Set `agent.system_prompt` in `~/.hermes/config.yaml` to a PKB-first instruction block.
+   - The prompt should tell Hermes to check the PKB first, then research if missing, and persist reusable notes back into the vault when available.
+   - Also encode the routing rules there: reusable knowledge -> `30_resources/`, project/task notes -> `10_projects/`, rough capture -> `00_inbox/`.
+6. Add the vault skill directory to `skills.external_dirs` in `~/.hermes/config.yaml`:
+   - `/data/syncthing/obsidian-second-brain/30_resources/AI Agent/Skills`
+   - This lets Hermes discover the vault’s own knowledge-management skills directly.
+7. In the bridge skill / system prompt, instruct Hermes to:
    - treat the vault as an Obsidian vault
    - read `AGENTS.md`, `README.md`, and `INDEX.md` before major PKB work
    - fall back to direct search in `30_resources/` when `INDEX.md` is empty or insufficient
@@ -80,8 +87,7 @@ Vault files are passive unless Hermes is explicitly pointed at them through a br
    - consult the vault workflow skill files for operations like write/query/ingest/lint/release
    - prefer updating existing notes over creating duplicates
    - persist project notes to `10_projects/`, reusable knowledge to `30_resources/`, and rough capture to `00_inbox/`
-6. Preload that bridge skill in the user’s default Hermes profile if they want PKB-aware behavior by default.
-7. Keep the personal-assistant role optional as a behavior overlay.
+8. Keep the personal-assistant role optional as a behavior overlay.
    - Use it when the user wants assistant-style prioritization and persistence behavior.
    - Do not make the role a hard dependency for basic PKB operations.
 
@@ -113,6 +119,19 @@ If query/lint workflows depend on `INDEX.md` but it is empty, either populate it
 ### 5. Avoid overloading the generic Obsidian skill
 
 Do not cram all vault-specific policy into a generic Obsidian skill. Keep generic format rules separate from vault-specific workflow.
+
+### 6. Runtime visibility can still fail even when config is correct
+
+A valid PKB-first config does not guarantee the current runtime can actually see the vault path. Verify `/data/syncthing/obsidian-second-brain` exists from the active Hermes runtime before assuming read/write/search will work.
+
+If the path is missing:
+- report that briefly and continue with live research if needed
+- do not pretend the PKB was searched
+- treat this as an environment/runtime visibility issue, not a prompt-design issue
+
+### 7. Gateway may need restart after changing PKB behavior
+
+Telegram/gateway sessions may keep the previously loaded ephemeral system prompt in memory. After changing `agent.system_prompt` in `~/.hermes/config.yaml`, restart Hermes/gateway if the new PKB-first behavior does not take effect on the next turn.
 
 ## Recommended wording for role files
 
