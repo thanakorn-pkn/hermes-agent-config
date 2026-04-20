@@ -13,6 +13,18 @@ DRY_RUN = os.environ.get("DRY_RUN", "0") == "1"
 MAX_PROMPT_CHARS = 70000
 MAX_UNTRACKED_FILE_BYTES = 40000
 MAX_UNTRACKED_FILES = 20
+LARGE_REVIEW_CHANGED_PATHS = 15
+LARGE_REVIEW_DIFF_CHARS = 20000
+REVIEW_NOISE_PATHS = {
+    "cron/jobs.json",
+    "context_length_cache.yaml",
+}
+REVIEW_NOISE_PREFIXES = (
+    "cron/output/",
+)
+REVIEW_NOISE_SUFFIXES = (
+    ".pyc",
+)
 
 REPOS = [
     {
@@ -38,7 +50,29 @@ def shutil_which(name: str) -> str | None:
     return None
 
 
-GEMINI_BIN = os.environ.get("GEMINI_BIN") or shutil_which("gemini")
+def resolve_executable(candidate: str | None) -> str | None:
+    if not candidate:
+        return None
+    if os.path.sep not in candidate:
+        located = shutil_which(candidate)
+        if located:
+            return located
+    path = Path(candidate).expanduser()
+    if path.is_file() and os.access(path, os.X_OK):
+        return str(path)
+    return None
+
+
+GEMINI_BIN = None
+for candidate in (
+    os.environ.get("GEMINI_BIN"),
+    shutil_which("gemini"),
+    "/data/pnpm/gemini",
+    str(Path.home() / ".local" / "bin" / "gemini"),
+):
+    GEMINI_BIN = resolve_executable(candidate)
+    if GEMINI_BIN:
+        break
 
 
 def run(cmd: list[str], cwd: str | None = None, check: bool = True) -> str:
@@ -80,6 +114,32 @@ def parse_untracked_paths(status: list[str]) -> list[str]:
         if raw:
             paths.append(raw)
     return paths
+
+
+def is_review_noise(path: str) -> bool:
+    if path in REVIEW_NOISE_PATHS:
+        return True
+    if any(path.startswith(prefix) for prefix in REVIEW_NOISE_PREFIXES):
+        return True
+    if any(path.endswith(suffix) for suffix in REVIEW_NOISE_SUFFIXES):
+        return True
+    return "__pycache__/" in path
+
+
+def filter_review_paths(paths: list[str]) -> list[str]:
+    return [path for path in paths if not is_review_noise(path)]
+
+
+def summarize_diff_for_prompt(diff_text: str, changed_paths: list[str], *, limit: int) -> str:
+    if not diff_text:
+        return "(none)"
+    if len(changed_paths) > LARGE_REVIEW_CHANGED_PATHS or len(diff_text) > LARGE_REVIEW_DIFF_CHARS:
+        return (
+            "[full patch omitted for model stability: "
+            f"{len(changed_paths)} changed paths, {len(diff_text)} diff chars; "
+            "use changed paths, git status, diff stats, and untracked previews]"
+        )
+    return trim_context(diff_text, limit)
 
 
 def upstream(repo: str) -> str | None:
@@ -134,6 +194,24 @@ def build_untracked_preview(repo: str, untracked_paths: list[str]) -> str:
             previews.append(diff)
             count += 1
     return "\n".join(previews)
+
+
+def cleanup_self_bytecode() -> None:
+    cache_dir = Path(__file__).resolve().parent / "__pycache__"
+    if not cache_dir.exists():
+        return
+    for pyc_path in cache_dir.glob("gemini_repo_review.*.pyc"):
+        try:
+            pyc_path.unlink()
+        except FileNotFoundError:
+            pass
+    try:
+        next(cache_dir.iterdir())
+    except StopIteration:
+        try:
+            cache_dir.rmdir()
+        except OSError:
+            pass
 
 
 def trim_context(text: str, limit: int = MAX_PROMPT_CHARS) -> str:
@@ -216,6 +294,8 @@ def gemini_review(repo_info: dict[str, str], changed_paths: list[str], untracked
     staged_excerpt = git(repo, "diff", "--cached", "--no-ext-diff", check=False)
     untracked_excerpt = build_untracked_preview(repo, untracked_paths)
     remote_info = remote_show(repo)
+    diff_excerpt_for_prompt = summarize_diff_for_prompt(diff_excerpt, changed_paths, limit=12000)
+    staged_excerpt_for_prompt = summarize_diff_for_prompt(staged_excerpt, changed_paths, limit=6000)
 
     prompt = f"""
 You are reviewing one git repository for an unattended nightly backup commit.
@@ -261,10 +341,10 @@ Remote info:
 {remote_info or '(none)'}
 
 Unstaged diff excerpt:
-{trim_context(diff_excerpt, 12000) or '(none)'}
+{diff_excerpt_for_prompt}
 
 Staged diff excerpt:
-{trim_context(staged_excerpt, 6000) or '(none)'}
+{staged_excerpt_for_prompt}
 
 Untracked file preview:
 {trim_context(untracked_excerpt, 8000) or '(none)'}
@@ -279,8 +359,6 @@ Untracked file preview:
             "text",
             "--approval-mode",
             "plan",
-            "--include-directories",
-            repo,
         ]
     )
     return extract_json(output)
@@ -318,28 +396,51 @@ def process_repo(repo_info: dict[str, str]) -> dict[str, Any]:
     status = status_lines(repo)
     changed = parse_changed_paths(status)
     untracked = parse_untracked_paths(status)
+    review_changed = filter_review_paths(changed)
+    review_untracked = filter_review_paths(untracked)
+    filtered_noise = [path for path in changed if is_review_noise(path)]
     push_info = repo_push_mode(repo)
 
-    if not changed:
-        return {
+    if not review_changed:
+        result = {
             "repo": repo_info["label"],
             "path": repo,
             "result": "clean",
             "branch": push_info["branch"],
             "push_mode": push_info["push_mode"],
         }
-
-    decision = validate_decision(gemini_review(repo_info, changed, untracked, push_info), changed)
+        if filtered_noise:
+            result["ignored_noise"] = filtered_noise
+        return result
 
     if push_info["push_mode"] == "unsafe":
+        warnings: list[str] = [
+            "Skipped Gemini review because push mode is unsafe for unattended automation.",
+        ]
+        if filtered_noise:
+            warnings.append(f"Ignored transient paths before review: {', '.join(filtered_noise)}")
         return {
             "repo": repo_info["label"],
             "path": repo,
             "result": "skipped_unsafe_push",
             "branch": push_info["branch"],
             "push_mode": push_info["push_mode"],
-            "decision": decision,
+            "pending_paths": review_changed,
+            "decision": {
+                "action": "noop",
+                "include": [],
+                "exclude": review_changed,
+                "commit_message": "",
+                "reason": "Push mode is unsafe, so unattended review/commit is skipped.",
+                "warnings": warnings,
+            },
         }
+
+    decision = validate_decision(gemini_review(repo_info, review_changed, review_untracked, push_info), review_changed)
+    if filtered_noise:
+        warnings = list(decision.get("warnings") or [])
+        warnings.append(f"Ignored transient paths before review: {', '.join(filtered_noise)}")
+        decision["warnings"] = warnings
 
     if decision["action"] != "commit":
         return {
@@ -385,6 +486,8 @@ def process_repo(repo_info: dict[str, str]) -> dict[str, Any]:
 
 
 def main() -> int:
+    cleanup_self_bytecode()
+
     if not GEMINI_BIN:
         print(json.dumps({"error": "gemini cli not found"}, ensure_ascii=False, indent=2))
         return 1
