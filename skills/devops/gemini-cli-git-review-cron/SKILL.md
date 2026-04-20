@@ -56,7 +56,13 @@ Use this when the user wants an unattended daily/nightly repo review-and-backup 
      - diff stats
      - truncated unstaged/staged diff excerpts
      - limited previews for untracked text files only
-   - Large prompts can make Gemini CLI/node OOM.
+   - For large repos, make this adaptive rather than just truncating:
+     - if changed-path count is high (for example >15), or
+     - if the raw diff body is large (for example >20k chars),
+     - replace full patch bodies with a short sentinel summary like:
+       - `full patch omitted for model stability: <N> changed paths, <M> diff chars`
+       - tell Gemini to rely on changed paths, git status, diff stats, and untracked previews instead.
+   - Large prompts can make Gemini CLI/node OOM even when a tiny Gemini prompt works fine.
 
 6. Stage selectively and commit safely.
    - Start from an unstaged state.
@@ -87,6 +93,11 @@ Prompt Gemini to exclude:
 - cron output
 - bulky generated artifacts
 - local-only noise like recent-files state
+- scheduler state files and review-script self-noise when applicable, e.g.:
+  - `cron/jobs.json`
+  - `context_length_cache.yaml`
+  - `__pycache__/`
+  - `.pyc`
 
 ## Important implementation details
 
@@ -120,6 +131,8 @@ The cron prompt should also say:
 A repo with large diffs/untracked files caused Gemini CLI (node) to crash with heap out-of-memory.
 Fix: reduce diff excerpt sizes and preview only untracked files.
 
+**Stronger fix learned later:** if a repo is especially noisy (many changed paths or very large raw diff), omitting the full patch body entirely is more reliable than merely trimming it. In one `.hermes` repo case, a reduced/stat-only prompt succeeded in ~60s while the full-diff version crashed Node with OOM.
+
 ### 2. PKB repo auto-push can be unsafe even if the remote exists
 A repo may have a reachable remote but still be unsafe for unattended push because the local branch has no upstream and the remote only advertises another branch name.
 Example seen: local `main`, remote `master`, diverged histories.
@@ -127,6 +140,23 @@ Treat this as unsafe and skip push.
 
 ### 3. Gemini may correctly identify secrets in diffs
 If Gemini flags a credential-bearing file, keep that file out of the staged set even when other changes in the repo are committed.
+
+### 4. The review script can create its own git noise
+Running a Python review script can create `__pycache__` / `.pyc` files under the script directory, which then appear as new untracked changes in the repo being reviewed.
+Fix: treat bytecode artifacts as review noise and optionally delete the script's own cache before scanning git status.
+
+### 5. Unsafe repos should short-circuit before Gemini
+If `push_mode` is already `unsafe`, do not spend a Gemini call just to decide whether to skip.
+Return `skipped_unsafe_push` immediately with a synthetic noop decision and warnings.
+This avoids wasting tokens/time on repos that cannot be auto-pushed anyway.
+
+### 6. Gemini CLI capacity exhaustion can dominate runtime
+Gemini CLI may repeatedly retry with 429 / `MODEL_CAPACITY_EXHAUSTED` errors (for example on `gemini-3.1-pro-preview`) and stretch one repo review into many minutes before finally failing.
+Treat this as a real external failure mode, not a script hang.
+Useful mitigations:
+- keep prompts small so retries are the only variable
+- surface the exact 429/capacity error in the repo result
+- consider pinning a more available Gemini model or adding a model/fallback override in the script if this becomes frequent
 
 ## Verification checklist
 
