@@ -1,34 +1,39 @@
 {
   "jobs": [
     {
-      "id": "98afbcedced1",
-      "name": "gemini-3am-config-review",
-      "prompt": "Run this command exactly once and wait for it to finish:\n\npython3 /home/tphat/.hermes/scripts/gemini_repo_review.py\n\nThat script already uses Gemini CLI to review the following git repos and, when safe, stage, commit, and push changes:\n- /home/tphat/.openclaw\n- /home/tphat/.hermes\n- /data/syncthing/obsidian-second-brain\n\nAfter the command finishes:\n- If it succeeds, summarize the JSON results concisely for the user.\n- If any repo reports an error or the command exits non-zero, clearly report the failure and include the relevant error text.\n- Mention when a repo was intentionally skipped for safety.\n- Do not inspect .env files or credential files.",
-      "skills": [],
-      "skill": null,
+      "id": "6b00f33b7cfc",
+      "name": "daily-hermes-self-update-review",
+      "prompt": "You are running a daily read-only Hermes self-update review for Bank.\n\nWork only against this repo: /home/tphat/.hermes/hermes-agent\nPrimary branch: main\nTimezone for summaries: Asia/Bangkok\nExact approval phrase: approve hermes self-update\n\nGoal: summarize upstream updates and generate an approval card. This cron run is STRICTLY read-only.\n\nDo NOT:\n- modify files\n- switch branches\n- stash\n- pull, merge, or rebase\n- commit or push\n- install packages\n\nRequired workflow:\n1. cd into /home/tphat/.hermes/hermes-agent\n2. Collect baseline state:\n   - git rev-parse --short HEAD\n   - git branch --show-current\n   - git status --short --branch\n3. Fetch upstream without changing local files:\n   - git fetch origin main --prune\n4. Compute ahead/behind counts between local HEAD and origin/main\n5. If upstream is ahead, summarize up to 10 commits from HEAD..origin/main using short SHA, subject, author, and relative date. Call out likely breaking/config/migration/tooling changes.\n6. If no upstream commits are ahead, say so clearly.\n7. Always report whether the working tree is clean or dirty, including modified/untracked files.\n8. If local commits exist ahead of upstream, call that out explicitly.\n9. End with heading: ## Approval card\n\nIn the approval card include:\n- Status: waiting for Bank\n- current branch\n- current local commit\n- ahead/behind counts\n- clean/dirty state\n- short \"If approved later in chat, I will\" list\n- exact reply phrase: approve hermes self-update\n- warning that no update will be applied until Bank approves in chat\n\nIn the \"If approved later in chat, I will\" list, explicitly say the approved update workflow must:\n- re-check repo state before writing\n- create a backup branch at the pre-update HEAD\n- update safely while preserving local work\n- run targeted verification for touched areas\n- commit any Hermes-made conflict resolutions or follow-up changes with a conventional commit instead of leaving them uncommitted\n- report exactly what changed\n\nDo not apply the update in this cron run. Only review and prepare the approval card.",
+      "skills": [
+        "approval-gated-repo-update-cron",
+        "hermes-agent",
+        "github-pr-workflow"
+      ],
+      "skill": "approval-gated-repo-update-cron",
       "model": null,
       "provider": null,
       "base_url": null,
       "script": null,
       "schedule": {
         "kind": "cron",
-        "expr": "0 3 * * *",
-        "display": "0 3 * * *"
+        "expr": "0 8 * * *",
+        "display": "0 8 * * *"
       },
-      "schedule_display": "0 3 * * *",
+      "schedule_display": "0 8 * * *",
       "repeat": {
         "times": null,
-        "completed": 0
+        "completed": 2
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
-      "created_at": "2026-04-14T22:25:07.624978+07:00",
-      "next_run_at": "2026-04-16T03:00:00+07:00",
-      "last_run_at": null,
-      "last_status": null,
+      "created_at": "2026-04-19T09:27:25.339498+07:00",
+      "next_run_at": "2026-04-21T08:00:00+07:00",
+      "last_run_at": "2026-04-20T08:02:48.943048+07:00",
+      "last_status": "ok",
       "last_error": null,
+      "last_delivery_error": null,
       "deliver": "origin",
       "origin": {
         "platform": "telegram",
@@ -38,5 +43,5 @@
       }
     }
   ],
-  "updated_at": "2026-04-15T03:00:24.446778+07:00"
+  "updated_at": "2026-04-20T18:43:40.798928+07:00"
 }
