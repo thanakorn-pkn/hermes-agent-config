@@ -23,3 +23,9 @@ For discovery tasks, Bank prefers Gemini first and Claude Sonnet as fallback if 
 Has chronic urticaria and wants lightweight help with daily symptom tracking/automation.
 §
 Preference: For future approved Hermes self-updates, Hermes should commit any Hermes-made conflict resolutions or follow-up changes automatically.
+§
+Prefers delegation whenever possible and wants Hermes to use smart routing to the best agent/tool while remaining the primary always-available interface.
+§
+Bank wants Hermes to be the personal assistant interface for now instead of OpenClaw.
+§
+Bank prefers ADR documents grouped into an ADR folder rather than mixed at the project root.

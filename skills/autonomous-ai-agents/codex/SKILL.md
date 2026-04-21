@@ -50,6 +50,39 @@ process(action="submit", session_id="<id>", data="yes")
 process(action="kill", session_id="<id>")
 ```
 
+## Interactive tmux Sessions
+
+For multi-turn interactive Codex work, use a named tmux session the same way you would for Claude Code-style long-lived agent sessions.
+
+Why use tmux:
+- keeps Codex alive across multiple checks/messages
+- makes it easy to capture output incrementally
+- works well when you want a durable interactive session rather than a one-shot `codex exec`
+
+Pattern:
+
+```
+# Start Codex in a repo inside tmux
+terminal(command="tmux new-session -d -s codex-agent -x 120 -y 40 'cd ~/project && codex'", timeout=10)
+
+# Give it a moment to start, then send the task
+terminal(command="sleep 5 && tmux send-keys -t codex-agent 'Review this repo and propose a refactor plan' Enter", timeout=10)
+
+# Read the current screen contents
+terminal(command="tmux capture-pane -t codex-agent -p", timeout=5)
+
+# Send follow-up instructions
+terminal(command="tmux send-keys -t codex-agent 'Now implement step 1' Enter", timeout=5)
+
+# End the session when done
+terminal(command="tmux send-keys -t codex-agent C-c && sleep 1 && tmux kill-session -t codex-agent", timeout=10)
+```
+
+Notes:
+- Codex still must run inside a git repo
+- prefer `codex exec ...` for simple one-shot tasks
+- prefer tmux when you want iterative control, durable state, or repeated follow-ups
+
 ## Key Flags
 
 | Flag | Effect |

@@ -58,7 +58,7 @@ agent:
       \ you today! Every question is AMAZING and we're gonna CRUSH IT together! This\
       \ is gonna be LEGENDARY! ARE YOU READY?! LET'S DO THIS! \U0001F4AA\U0001F624\
       \U0001F680"
-  system_prompt: "Primary PKB vault: /data/syncthing/obsidian-second-brain"
+  system_prompt: 'Primary PKB vault: /data/syncthing/obsidian-second-brain'
 terminal:
   backend: local
   modal_mode: auto
@@ -108,13 +108,6 @@ bedrock:
     guardrail_version: ''
     stream_processing_mode: async
     trace: disabled
-smart_model_routing:
-  enabled: false
-  max_simple_chars: 160
-  max_simple_words: 28
-  cheap_model:
-    provider: google
-    model: google/gemini-3.1-flash-lite-preview
 auxiliary:
   vision:
     provider: auto
@@ -122,6 +115,7 @@ auxiliary:
     base_url: ''
     api_key: ''
     timeout: 30
+    extra_body: {}
     download_timeout: 30
   web_extract:
     provider: auto
@@ -129,48 +123,57 @@ auxiliary:
     base_url: ''
     api_key: ''
     timeout: 360
+    extra_body: {}
   compression:
     provider: auto
     model: google/gemini-3-flash-preview
     base_url: ''
     api_key: ''
     timeout: 120
+    extra_body: {}
   session_search:
     provider: auto
     model: ''
     base_url: ''
     api_key: ''
     timeout: 30
+    extra_body: {}
+    max_concurrency: 3
   skills_hub:
     provider: auto
     model: ''
     base_url: ''
     api_key: ''
     timeout: 30
+    extra_body: {}
   approval:
     provider: auto
     model: ''
     base_url: ''
     api_key: ''
     timeout: 30
+    extra_body: {}
   mcp:
     provider: auto
     model: ''
     base_url: ''
     api_key: ''
     timeout: 30
+    extra_body: {}
   flush_memories:
     provider: auto
     model: ''
     base_url: ''
     api_key: ''
     timeout: 30
+    extra_body: {}
   title_generation:
     provider: auto
     model: ''
     base_url: ''
     api_key: ''
     timeout: 30
+    extra_body: {}
 display:
   compact: false
   personality: concise
@@ -179,9 +182,13 @@ display:
   bell_on_complete: false
   show_reasoning: false
   streaming: true
+  final_response_markdown: strip
   inline_diffs: true
   show_cost: false
   skin: default
+  user_message_preview:
+    first_lines: 2
+    last_lines: 2
   interim_assistant_messages: true
   tool_progress_command: false
   tool_progress_overrides: {}
@@ -271,6 +278,7 @@ discord:
   auto_thread: true
   reactions: true
   channel_prompts: {}
+  server_actions: ''
 whatsapp: {}
 telegram:
   channel_prompts: {}
@@ -307,7 +315,14 @@ logging:
   backup_count: 3
 network:
   force_ipv4: false
-_config_version: 19
+_config_version: 21
+smart_model_routing:
+  enabled: false
+  max_simple_chars: 160
+  max_simple_words: 28
+  cheap_model:
+    provider: google
+    model: google/gemini-3.1-flash-lite-preview
 session_reset:
   mode: idle
   idle_minutes: 240
@@ -368,3 +383,26 @@ custom_providers:
   models:
     gemma3:12b:
       context_length: 128
+plugins:
+  enabled: []
+
+# ── Fallback Model ────────────────────────────────────────────────────
+# Automatic provider failover when primary is unavailable.
+# Uncomment and configure to enable. Triggers on rate limits (429),
+# overload (529), service errors (503), or connection failures.
+#
+# Supported providers:
+#   openrouter   (OPENROUTER_API_KEY)  — routes to any model
+#   openai-codex (OAuth — hermes auth) — OpenAI Codex
+#   nous         (OAuth — hermes auth) — Nous Portal
+#   zai          (ZAI_API_KEY)         — Z.AI / GLM
+#   kimi-coding  (KIMI_API_KEY)        — Kimi / Moonshot
+#   kimi-coding-cn (KIMI_CN_API_KEY)   — Kimi / Moonshot (China)
+#   minimax      (MINIMAX_API_KEY)     — MiniMax
+#   minimax-cn   (MINIMAX_CN_API_KEY)  — MiniMax (China)
+#
+# For custom OpenAI-compatible endpoints, add base_url and key_env.
+#
+# fallback_model:
+#   provider: openrouter
+#   model: anthropic/claude-sonnet-4
