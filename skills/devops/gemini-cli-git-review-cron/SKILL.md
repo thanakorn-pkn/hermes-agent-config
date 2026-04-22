@@ -1,11 +1,11 @@
 ---
 name: gemini-cli-git-review-cron
-description: Create a recurring cron job that uses Gemini CLI to review multiple git repos, make selective commits, and push only when branch/upstream safety checks pass.
+description: Legacy Gemini CLI review cron guidance. Prefer the lightweight Hermes-native review path in `devops/lightweight-git-review-cron` for new automation.
 ---
 
 # Gemini CLI Git Review Cron
 
-Use this when the user wants an unattended daily/nightly repo review-and-backup workflow driven by Gemini CLI.
+Legacy guidance only. Prefer the lightweight Hermes-native review path in `devops/lightweight-git-review-cron` for new unattended daily/nightly repo review-and-backup workflows.
 
 ## When to use
 
@@ -85,6 +85,24 @@ Prompt Gemini to favor:
 - skills
 - notes / PKB content
 
+## Model selection and fallback
+
+Do not rely on the Gemini CLI default model for unattended cron runs.
+
+Observed behavior:
+- default routing could land on `gemini-3.1-pro-preview`, which repeatedly failed with `429` / `MODEL_CAPACITY_EXHAUSTED`
+- `gemini-3-auto` is **not** a valid model name for Gemini CLI (`ModelNotFoundError`)
+- `gemini-2.5-pro` may work but can still hit capacity retries
+- `gemini-2.5-flash` was the healthiest live option during debugging and successfully handled the real PKB review prompt
+
+Recommended approach:
+- explicitly pass `-m gemini-2.5-flash` in the review script
+- optionally support an override env var such as `GEMINI_MODEL`
+- if you add fallback logic, prefer:
+  1. `gemini-2.5-flash`
+  2. `gemini-2.5-pro`
+- surface the exact stderr when capacity exhaustion happens so the cron report distinguishes external model saturation from script bugs
+
 Prompt Gemini to exclude:
 - `.env` and credential files
 - secrets/tokens discovered in diffs
@@ -116,6 +134,23 @@ Let the local script perform actual git writes after validation.
 
 Example:
 `gemini -p "...prompt..." --output-format text --approval-mode plan --include-directories <repo>`
+
+### Add a stats-only retry path
+The richer prompt can still hang on some repos even when the prompt size is not obviously huge.
+A later live repro showed:
+- PKB succeeded with the richer prompt on `gemini-2.5-flash`
+- `.openclaw` and `.hermes` still timed out on the richer prompt
+- both `.openclaw` and `.hermes` succeeded when retried with a reduced **stats-only** prompt containing only:
+  - changed paths / porcelain status
+  - `git status --short --branch`
+  - `git diff --stat`
+  - no full patch bodies
+  - no untracked-file patch previews
+
+Recommended retry behavior:
+1. try the richer prompt first
+2. if the Gemini subprocess times out or stalls, retry once with the stats-only prompt
+3. if the reduced prompt also fails, return `error` with the subprocess stderr/timeout context
 
 ## Cron job pattern
 

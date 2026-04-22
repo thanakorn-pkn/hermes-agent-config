@@ -18,13 +18,13 @@ Preference: Prefer agent-agnostic repo conventions across Hermes, Codex, Claude 
 §
 Preference: For Hermes behavior/settings changes, make real Hermes config changes rather than just saving memory/context.
 §
-For discovery tasks, Bank prefers Gemini first and Claude Sonnet as fallback if Gemini is unavailable.
+For routing decisions, Bank wants Hermes to propose the best route instead of following a stored Gemini-first preference.
 §
 Has chronic urticaria and wants lightweight help with daily symptom tracking/automation.
 §
 Preference: For future approved Hermes self-updates, Hermes should commit any Hermes-made conflict resolutions or follow-up changes automatically.
 §
-Prefers delegation whenever possible and wants Hermes to use smart routing to the best agent/tool while remaining the primary always-available interface.
+Bank expects autonomous execution: solve low-risk blockers without asking, delegate investigations when stuck, and return concise summaries.
 §
 Bank wants Hermes to be the personal assistant interface for now instead of OpenClaw.
 §

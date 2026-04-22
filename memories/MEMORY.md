@@ -8,7 +8,7 @@ User's homelab-infra repo is at ~/projects/homelab-infra. Ansible commands must 
 §
 Homelab: nuc-13-pro has LAN IP 192.168.1.161. Uses k3s with Traefik reverse proxy. UFW firewall managed via Ansible homelab-infra repo. Paperclip AI installed from source at /home/tphat/projects/paperclip, instance at ~/.paperclip/instances/default/.
 §
-Paperclip preferred architecture for homelab: Postgres 17 as standalone Podman quadlet container (port 5432 published), Paperclip app runs directly on host via systemd service using `pnpm dev:once`. This gives the app direct access to host CLIs (Claude Code, Codex, Gemini, Hermes) without bind-mount complexity.
+Paperclip preferred architecture for homelab: Postgres 17 as standalone Podman quadlet container (port 5432), app runs directly on host via systemd `pnpm dev:once`, giving access to host CLIs. On this host, `codex` and `gemini` are under `/data/pnpm` and may require `bash -ic` because non-interactive PATH can miss that dir
 §
 When running `pnpm dev:once` in a systemd service (non-interactive), you MUST set `Environment=npm_config_tailscale_auth=true` — otherwise Paperclip defaults to `local_trusted` mode and refuses `0.0.0.0` binding with error "local_trusted mode requires loopback host binding". This env var triggers `authenticated` mode in dev-runner.ts.
 §

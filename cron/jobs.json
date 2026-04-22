@@ -18,16 +18,16 @@
       "schedule_display": "0 2 * * *",
       "repeat": {
         "times": null,
-        "completed": 0
+        "completed": 1
       },
-      "enabled": true,
-      "state": "scheduled",
-      "paused_at": null,
+      "enabled": false,
+      "state": "paused",
+      "paused_at": "2026-04-22T22:45:32.826629+07:00",
       "paused_reason": null,
       "created_at": "2026-04-21T09:14:05.508768+07:00",
       "next_run_at": "2026-04-23T02:00:00+07:00",
-      "last_run_at": null,
-      "last_status": null,
+      "last_run_at": "2026-04-22T02:00:27.016311+07:00",
+      "last_status": "ok",
       "last_error": null,
       "last_delivery_error": null,
       "deliver": "origin",
@@ -56,14 +56,163 @@
       "schedule_display": "30 7 * * *",
       "repeat": {
         "times": null,
+        "completed": 1
+      },
+      "enabled": false,
+      "state": "paused",
+      "paused_at": "2026-04-22T22:45:33.832912+07:00",
+      "paused_reason": null,
+      "created_at": "2026-04-21T09:14:06.511204+07:00",
+      "next_run_at": "2026-04-23T07:30:00+07:00",
+      "last_run_at": "2026-04-22T07:30:44.849006+07:00",
+      "last_status": "ok",
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "6538865360",
+        "chat_name": "Thanakorn Phattarapakorn",
+        "thread_id": null
+      }
+    },
+    {
+      "id": "0a428a2c834f",
+      "name": "nightly-lightweight-multi-repo-review",
+      "prompt": "Nightly Hermes-native multi-repo review, local-only delivery. Use the lightweight model pinned for this job. Review these repos in order: /home/tphat/.openclaw, /home/tphat/.hermes, /data/syncthing/obsidian-second-brain.\n\nHard rules:\n- Do NOT send Telegram messages or any other external notification for this overnight run; local delivery only.\n- Never inspect, preview, or read .env files, credential files, token/secret/auth material, or private-key-like files.\n- Skip any repo that is unsafe for unattended automation.\n- Commit/push only when safe.\n- Keep the review prompt/context small; use status, branch/upstream, remotes, diff stats, and minimal excerpts only.\n\nPer repo, do the following:\n1) Verify the path exists and is a git worktree.\n2) Record current branch, upstream, remotes, and `git status --short --branch`.\n3) Determine whether the repo is safe for unattended commit/push.\n   - Safe only if the branch state is clear and push mapping is safe.\n   - Unsafe if detached HEAD, missing/mismatched upstream, remote branch mismatch, or if any sensitive path would need inspection.\n4) Filter out noise and sensitive paths from review. Never stage or inspect .env/credential files.\n5) If safe and the changes are clearly intentional, stage only approved non-sensitive files, commit with a short conventional commit message, and push only if push safety passes.\n   - tracking branch -> `git push`\n   - matching remote branch but no upstream -> `git push -u origin <branch>`\n   - otherwise -> skip push\n6) If unsafe, skip commit/push and explain why.\n\nPrefer these change categories when deciding what is worth committing: configuration, docs, scripts, skills, notes, PKB content.\n\nEnd with a concise JSON summary per repo including: repo, branch, push_mode, result, commit hash if any, and short reason/warnings. If a repo was skipped, say why. If nothing is safe to commit, report noop rather than forcing a change.",
+      "skills": [
+        "lightweight-git-review-cron"
+      ],
+      "skill": "lightweight-git-review-cron",
+      "model": "gpt-5.4-mini",
+      "provider": "openai-codex",
+      "base_url": null,
+      "script": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "5 3 * * *",
+        "display": "5 3 * * *"
+      },
+      "schedule_display": "5 3 * * *",
+      "repeat": {
+        "times": null,
         "completed": 0
       },
       "enabled": true,
       "state": "scheduled",
       "paused_at": null,
       "paused_reason": null,
-      "created_at": "2026-04-21T09:14:06.511204+07:00",
-      "next_run_at": "2026-04-22T07:30:00+07:00",
+      "created_at": "2026-04-22T22:11:02.536338+07:00",
+      "next_run_at": "2026-04-24T03:05:00+07:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": null
+    },
+    {
+      "id": "5a2848eaece1",
+      "name": "overnight-mission-control-pass-2",
+      "prompt": "Autonomous overnight Mission Control continuation, second pass. Local delivery only; do NOT message Telegram. Work in /home/tphat/projects/mission-control. Goal: continue Phase 3 progress regardless of whether Claude Code is currently available; if Claude reports usage limits or similar issues, use Codex and Hermes direct tools instead of blocking. Start by inspecting current repo state, especially whether frontend API contracts, /services UI, sidebar updates, homepage Hermes-first changes, and runtime-state wiring are already implemented. Continue the highest-value remaining work from docs/plans/2026-04-21-hermes-first-phase3.md while avoiding unrelated dirty files and logs. Do not commit. Verify with the strongest available checks for the files you touch, such as `cd frontend && pnpm exec tsc --noEmit`, `cd frontend && pnpm build` if feasible, and backend import/ruff checks as needed. End with a concise summary of changed files, verification evidence, and remaining blockers. Do not schedule new cron jobs.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "schedule": {
+        "kind": "once",
+        "run_at": "2026-04-23T03:20:00+07:00",
+        "display": "once at 2026-04-23 03:20"
+      },
+      "schedule_display": "once at 2026-04-23 03:20",
+      "repeat": {
+        "times": 1,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-04-22T22:43:50.814153+07:00",
+      "next_run_at": "2026-04-23T03:20:00+07:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "6538865360",
+        "chat_name": "Thanakorn Phattarapakorn",
+        "thread_id": null
+      }
+    },
+    {
+      "id": "18e4b1a57361",
+      "name": "overnight-mission-control-pass-3",
+      "prompt": "Autonomous pre-morning Mission Control continuation, third pass. Local delivery only; do NOT message Telegram. Work in /home/tphat/projects/mission-control. Goal: finish the most important remaining work for the morning summary. First inspect repo state and prior overnight progress. Then complete the highest-value remaining Phase 3 tasks from docs/plans/2026-04-21-hermes-first-phase3.md, prioritizing anything user-visible and verifiable: frontend API contracts, /services page, sidebar, homepage Hermes-first dashboard, and board runtime-state adjustments. Use direct Hermes tools, and use Codex CLI and Claude Code CLI opportunistically when healthy; never block waiting for Claude availability. Avoid unrelated dirty files/logs and do not commit. Verify with relevant checks and summarize clearly. Do not schedule new cron jobs.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "schedule": {
+        "kind": "once",
+        "run_at": "2026-04-23T06:20:00+07:00",
+        "display": "once at 2026-04-23 06:20"
+      },
+      "schedule_display": "once at 2026-04-23 06:20",
+      "repeat": {
+        "times": 1,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-04-22T22:43:51.820877+07:00",
+      "next_run_at": "2026-04-23T06:20:00+07:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "6538865360",
+        "chat_name": "Thanakorn Phattarapakorn",
+        "thread_id": null
+      }
+    },
+    {
+      "id": "ddac6e0c98cb",
+      "name": "morning-mission-control-and-cron-report",
+      "prompt": "It is the morning report for Bank. Send exactly one concise Telegram-friendly summary message to the origin chat. First inspect current state directly: (1) `cronjob list` to verify the nightly lightweight multi-repo review job and any overnight one-shot jobs; (2) inspect /home/tphat/projects/mission-control git status and key new files under backend/app/models, backend/app/routers, backend/app/schemas, backend/alembic/versions, frontend/src/app, frontend/src/lib, and docs as relevant; (3) inspect /home/tphat/.hermes/hermes-agent git status if the delegation bug investigation changed Hermes source; (4) if useful, inspect local cron output files under ~/.hermes/cron/output for the overnight jobs you find. Then send a concise summary covering: what was completed for Mission Control, what was verified, what changed on the cron/repo-review side, what was learned/fixed about the delegation/API stall, and the next highest-value remaining step. Keep it concise, no markdown tables, no unnecessary preamble.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "schedule": {
+        "kind": "once",
+        "run_at": "2026-04-23T07:30:00+07:00",
+        "display": "once at 2026-04-23 07:30"
+      },
+      "schedule_display": "once at 2026-04-23 07:30",
+      "repeat": {
+        "times": 1,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-04-22T22:43:52.827614+07:00",
+      "next_run_at": "2026-04-23T07:30:00+07:00",
       "last_run_at": null,
       "last_status": null,
       "last_error": null,
@@ -75,7 +224,45 @@
         "chat_name": "Thanakorn Phattarapakorn",
         "thread_id": null
       }
+    },
+    {
+      "id": "555df7b07803",
+      "name": "pre-morning-claude-mission-control-review",
+      "prompt": "Autonomous local-only pre-morning Claude Code review. Work in /home/tphat/projects/mission-control. Do NOT message Telegram. Use Claude Code if available and healthy; if Claude is unavailable or usage-limited, record that fact locally and exit cleanly. Goal: inspect all Mission Control progress completed overnight, review frontend/user-visible state, identify any remaining gaps for the 7:30 summary, and provide a concise final reviewer-style assessment of what is done, what is verified, and what remains. Prefer `claude -p` print mode. Avoid unrelated files and do not commit.",
+      "skills": [],
+      "skill": null,
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "schedule": {
+        "kind": "once",
+        "run_at": "2026-04-23T06:50:00+07:00",
+        "display": "once at 2026-04-23 06:50"
+      },
+      "schedule_display": "once at 2026-04-23 06:50",
+      "repeat": {
+        "times": 1,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-04-23T00:14:45.992278+07:00",
+      "next_run_at": "2026-04-23T06:50:00+07:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "local",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "6538865360",
+        "chat_name": "Thanakorn Phattarapakorn",
+        "thread_id": null
+      }
     }
   ],
-  "updated_at": "2026-04-22T02:00:06.664883+07:00"
+  "updated_at": "2026-04-23T03:05:15.428126+07:00"
 }
