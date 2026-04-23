@@ -43,6 +43,22 @@ Watch for these signs:
 - a request appears to ignore the requested subprocess route and uses the inherited provider instead
 - retries end in a generic message like `API call failed after 3 retries: ...`, masking the original transport mismatch
 
+## Separate but related stall class: gateway inactivity timeout
+
+Not every delegation stall is an ACP-routing problem.
+A separate failure mode is the parent session appearing idle while a child subagent is still working.
+
+Watch for these signs:
+- delegated work runs for a while, then the gateway kills the parent for "no activity"
+- the child is busy, but the parent's activity timestamp is not being refreshed
+- tests or code mention a delegation heartbeat thread / `_touch_activity`
+
+Current Hermes code includes a heartbeat loop in `tools/delegate_tool.py` that periodically propagates child activity back to the parent, and tests in `tests/tools/test_delegate.py` verify that it fires during child execution and stops after completion.
+
+Practical debugging rule:
+- if the symptom is **wrong transport / wrong model / HTTP fallback**, debug ACP routing
+- if the symptom is **timeout during long-running child work**, inspect heartbeat propagation separately
+
 ## Systematic debug steps
 
 1. Reproduce with a minimal child build.
@@ -61,6 +77,17 @@ If command lookup becomes relevant:
 - compare non-interactive shell lookup with interactive `bash -ic`
 - verify the target CLI actually supports the expected ACP flags
 - use absolute paths for cron or non-interactive launches when PATH differs
+
+### Concrete findings from this machine
+
+- `claude` is on the normal non-interactive PATH, but the installed Claude Code CLI does **not** support `--acp`
+- `codex` is typically only available in interactive `bash -ic` via `/data/pnpm/codex`, and the installed CLI does **not** support `--acp` (it exposes `mcp-server`, not the expected ACP stdio flags)
+- `gemini` is typically only available in interactive `bash -ic` via `/data/pnpm/gemini`, and **does** expose `--acp`
+
+Practical consequence:
+- `acp_command='claude'` is not a valid ACP target on this host
+- `acp_command='codex'` will usually fail in non-interactive contexts unless routed via absolute path, and even then is not a valid `--acp` target with the currently installed CLI
+- `acp_command='gemini'` may be ACP-capable as a CLI, but Hermes should still reject it unless the resolved child runtime is one that actually consumes explicit ACP overrides
 
 ## Safe routing guidance
 

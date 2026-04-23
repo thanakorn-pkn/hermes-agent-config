@@ -45,3 +45,5 @@
 - Choose the narrowest capable tool first.
 - Re-check live availability before using any external agent route that may have changed.
 - After delegation or complex tool use, verify the result with direct evidence before finalizing.
+- If subprocess/tool spawns fail with `OSError: [Errno 12] Cannot allocate memory`, do not assume physical RAM exhaustion. First check Linux overcommit/commit pressure (`/proc/sys/vm/overcommit_memory`, `/proc/meminfo` for `CommitLimit` and `Committed_AS`) and inspect top processes by virtual size (`VSZ`/`VIRT`) for stale long-lived Claude/Codex/Node processes. On this host, strict overcommit mode can cause fork/exec `ENOMEM` even when `MemAvailable` is high.
+- Under suspected overcommit pressure, avoid spawning fresh long-lived agent sessions until commit pressure is understood; prefer reusing existing sessions, cleaning up stale high-VSZ processes when safe, and only then retrying helper/background spawns.

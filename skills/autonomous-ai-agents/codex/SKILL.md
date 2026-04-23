@@ -54,6 +54,25 @@ process(action="kill", session_id="<id>")
 
 For multi-turn interactive Codex work, use a named tmux session the same way you would for Claude Code-style long-lived agent sessions.
 
+### Current machine notes
+
+On this machine, `codex` may be missing from the default non-interactive PATH even though it exists at `/data/pnpm/codex` and works inside `bash -ic`.
+
+When a foreground or cron-style launch says `codex: command not found`, verify both:
+- `command -v codex`
+- `bash -ic 'command -v codex && codex --version'`
+
+For unattended automation, prefer one of these:
+- absolute path: `/data/pnpm/codex`
+- interactive shell wrapper: `bash -ic 'codex ...'`
+
+Codex may also show an updater prompt on startup:
+- `1. Update now`
+- `2. Skip`
+- `3. Skip until next version`
+
+For autonomous tmux sessions, send `2` + Enter first if that prompt appears, then send the actual task.
+
 Why use tmux:
 - keeps Codex alive across multiple checks/messages
 - makes it easy to capture output incrementally

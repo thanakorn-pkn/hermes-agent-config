@@ -24,7 +24,7 @@ Has chronic urticaria and wants lightweight help with daily symptom tracking/aut
 §
 Preference: For future approved Hermes self-updates, Hermes should commit any Hermes-made conflict resolutions or follow-up changes automatically.
 §
-Bank expects autonomous execution: solve low-risk blockers without asking, delegate investigations when stuck, and return concise summaries.
+Bank expects long autonomous execution with tmux-backed interactive coding sessions for coding work, auto-resume when possible, advisory delegation when stuck, low-risk decisions made without asking, and necessary-only progress updates.
 §
 Bank wants Hermes to be the personal assistant interface for now instead of OpenClaw.
 §
