@@ -14,7 +14,7 @@ Subscriptions: ChatGPT Plus / OpenAI Codex
 §
 Subscriptions: Google AI Pro
 §
-Preference: Prefer agent-agnostic repo conventions across Hermes, Codex, Claude Code, and OpenClaw.
+Preference: Prefer agent-agnostic repo conventions across agent CLIs.
 §
 Preference: For Hermes behavior/settings changes, make real Hermes config changes rather than just saving memory/context.
 §
@@ -24,7 +24,7 @@ Has chronic urticaria and wants lightweight help with daily symptom tracking/aut
 §
 Preference: For future approved Hermes self-updates, Hermes should commit any Hermes-made conflict resolutions or follow-up changes automatically.
 §
-Bank expects long autonomous execution with tmux-backed interactive coding sessions for coding work, auto-resume when possible, advisory delegation when stuck, low-risk decisions made without asking, and necessary-only progress updates.
+Bank prefers Claude Code delegation when possible and tmux sessions that he can attach to directly; no live streaming back to chat is needed.
 §
 Bank wants Hermes to be the personal assistant interface for now instead of OpenClaw.
 §
