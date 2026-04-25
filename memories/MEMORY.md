@@ -12,6 +12,6 @@ Paperclip preferred architecture for homelab: Postgres 17 as standalone Podman q
 §
 When running `pnpm dev:once` in a systemd service (non-interactive), you MUST set `Environment=npm_config_tailscale_auth=true` — otherwise Paperclip defaults to `local_trusted` mode and refuses `0.0.0.0` binding with error "local_trusted mode requires loopback host binding". This env var triggers `authenticated` mode in dev-runner.ts.
 §
-Mission Control is a solo-user self-hosted entrypoint for custom services, prioritizing low maintenance, agent-task visibility, homelab-only operation, and minimal token/cost overhead. Current direction is Hermes-first; OpenClaw is on hold for now.
+Mission Control is Hermes-first, solo-user, homelab-only, low-maintenance; OpenClaw is on hold. On this host, tmux-wrapped `claude -p` can hide output; prefer foreground JSON + resume.
 §
 The vault’s MOC files live in `30_resources/` and use the `*-moc.md` naming suffix (for example, `homelab-moc.md`); `INDEX.md` is the root registry for MOCs.

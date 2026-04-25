@@ -16,16 +16,18 @@ Subscriptions: Google AI Pro
 §
 Preference: Prefer agent-agnostic repo conventions across agent CLIs.
 §
-Preference: For Hermes behavior/settings changes, make real Hermes config changes rather than just saving memory/context.
+For Hermes behavior/settings changes, make real config changes.
 §
 For routing decisions, Bank wants Hermes to propose the best route instead of following a stored Gemini-first preference.
 §
 Has chronic urticaria and wants lightweight help with daily symptom tracking/automation.
 §
-Preference: For future approved Hermes self-updates, Hermes should commit any Hermes-made conflict resolutions or follow-up changes automatically.
+For approved Hermes self-updates, Hermes should auto-commit Hermes-made conflict resolutions.
 §
-Bank prefers Claude Code delegation when possible and tmux sessions that he can attach to directly; no live streaming back to chat is needed.
+Bank prefers Claude Code delegation and attachable tmux sessions; no live streaming needed.
 §
-Bank wants Hermes to be the personal assistant interface for now instead of OpenClaw.
+Bank wants Hermes as the assistant interface, not OpenClaw.
 §
-Bank prefers ADR documents grouped into an ADR folder rather than mixed at the project root.
+Bank prefers ADRs in an ADR folder.
+§
+Bank prefers git repository changes to be committed in useful, meaningful commits rather than left uncommitted.

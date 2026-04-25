@@ -111,3 +111,4 @@ sudo ufw status numbered | grep <port>
 3. `-c local` flag needed when running on the target host itself
 4. Install collections before running if requirements.yml was updated
 5. Run from `hosts/` subdirectory, not repo root
+6. Opening a port in UFW is not enough if the service is still bound to `127.0.0.1`; for Hermes dashboard exposure, start it with `--host 0.0.0.0 --port 9119 --no-open --insecure` so LAN clients can reach it
