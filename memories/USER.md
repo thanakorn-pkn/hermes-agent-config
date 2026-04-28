@@ -31,3 +31,7 @@ Bank wants Hermes as the assistant interface, not OpenClaw.
 Bank prefers ADRs in an ADR folder.
 §
 Bank prefers git repository changes to be committed in useful, meaningful commits rather than left uncommitted.
+§
+Bank prefers Gemini CLI for research tasks when requested, and prefers an interactive Gemini session when practical.
+§
+Bank prefers a brief upfront explanation of the subagent workflow and roles before autonomous multi-agent research.
