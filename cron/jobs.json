@@ -110,7 +110,54 @@
       "last_delivery_error": null,
       "deliver": "local",
       "origin": null
+    },
+    {
+      "id": "fc6764021330",
+      "name": "tiktok-ai-affiliate-continue",
+      "prompt": "Continue the active TikTok AI Affiliate project in the Obsidian vault.\n\nContext:\n- Vault path: /data/syncthing/obsidian-second-brain\n- Project notes live in: 10_projects/Personal/TikTok AI Affiliate/\n- Treat the project as active and autonomous where safe.\n- The project note now includes a resume plan and a usage-limit strategy.\n\nBefore doing anything else, read:\n- 10_projects/Personal/TikTok AI Affiliate/Homepage.md\n- 10_projects/Personal/TikTok AI Affiliate/Implementation Plan.md\n\nThen:\n1. Retrieve whatever usage-limit / quota information is visible in the current session or tool UI, if any.\n2. Prefer the lightest model/agent or lowest-cost action that can make forward progress.\n3. Continue the next safe unfinished step from the Reading Order / Implementation Plan.\n4. If limits are tight or no high-cost work is justified, do a low-cost maintenance step instead: tighten the resume plan, refine the backlog, or record the next post-reset action.\n5. Keep the project note self-contained so a later run can resume without re-deriving decisions.\n\nDo not ask the user for clarification unless scope, compliance, or tool choice materially changes.",
+      "skills": [
+        "secondbrain"
+      ],
+      "skill": "secondbrain",
+      "model": null,
+      "provider": null,
+      "base_url": null,
+      "script": null,
+      "context_from": null,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 */4 * * *",
+        "display": "0 */4 * * *"
+      },
+      "schedule_display": "0 */4 * * *",
+      "repeat": {
+        "times": null,
+        "completed": 0
+      },
+      "enabled": true,
+      "state": "scheduled",
+      "paused_at": null,
+      "paused_reason": null,
+      "created_at": "2026-04-30T08:31:41.460569+07:00",
+      "next_run_at": "2026-04-30T12:00:00+07:00",
+      "last_run_at": null,
+      "last_status": null,
+      "last_error": null,
+      "last_delivery_error": null,
+      "deliver": "origin",
+      "origin": {
+        "platform": "telegram",
+        "chat_id": "6538865360",
+        "chat_name": "Thanakorn Phattarapakorn",
+        "thread_id": null
+      },
+      "enabled_toolsets": [
+        "file",
+        "terminal",
+        "web"
+      ],
+      "workdir": "/data/syncthing/obsidian-second-brain"
     }
   ],
-  "updated_at": "2026-04-30T03:07:58.535633+07:00"
+  "updated_at": "2026-04-30T08:43:04.469882+07:00"
 }

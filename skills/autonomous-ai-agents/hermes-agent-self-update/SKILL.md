@@ -1,6 +1,6 @@
 ---
 name: hermes-agent-self-update
-description: "Review Hermes updates before applying them: check current vs upstream version, summarize changes by feature/fix/obsolete-config/security, require a clean ~/.hermes config repo before approval, then run hermes update with prompt handling that prefers defaults and otherwise answers yes."
+description: "Review Hermes updates before applying them: check current vs upstream version, summarize changes by feature/fix/obsolete-config/security, ask for approval, run hermes update with prompt handling that prefers defaults and otherwise answers yes, then bulk-commit all ~/.hermes changes under a single update commit."
 version: 1.4.0
 author: Hermes Agent
 license: MIT
@@ -30,8 +30,8 @@ This skill is intentionally **approval-gated**:
   - **fix issues**
   - **obsolete / removed / config-impacting changes**
   - **security concerns**
-- Require the separate `~/.hermes` config repo to be clean before asking for update approval
-- Ask Bank for approval only after that prerequisite is satisfied
+- Note the current state of the `~/.hermes` config repo (clean or dirty) for awareness
+- Ask Bank for approval after presenting the summary
 - If Bank approves, run `hermes update` and bypass interactive prompts by:
   - accepting the **default** answer when the prompt is default-yes (`[Y/n]`)
   - answering **`y`** when a prompt is not clearly default-yes
@@ -42,9 +42,10 @@ This skill is intentionally **approval-gated**:
 - Do **not** claim a security scan was clean unless you actually ran one.
 - Always report dirty working tree state and local branch divergence.
 - If `git status --short --branch` shows the repo is **ahead** of `origin/main` or **diverged**, explicitly warn that Hermes' built-in updater may hard-reset to `origin/main` when fast-forward is impossible.
-- If the working tree is dirty, note that `hermes update` may auto-stash and offer to restore local changes afterward.
+- `hermes update` may auto-stash and offer to restore local changes afterward.
+- `hermes update` can also sync bundled skills and leave `~/.hermes` dirty; this is expected and will be folded into the post-update bulk commit.
 - Do **not** confuse the Hermes source checkout `~/.hermes/hermes-agent` with the separate Hermes config repo at `~/.hermes`.
-- A clean `~/.hermes` repo is a hard prerequisite before asking for approval to self-update. If it is dirty, stop and tell Bank to let the separate config-commit cron handle it first.
+- After a successful update, **always** make a single bulk commit of all `~/.hermes` changes with the message `chore: update hermes to <version>`. Do not split the post-update changes into multiple commits.
 - Never read `.env` or other credential files.
 
 ## Repo assumptions
@@ -79,7 +80,7 @@ Also capture:
 - whether local is ahead/behind/diverged
 - whether the separate Hermes config repo at `~/.hermes` is currently clean or dirty
 
-If `~/.hermes` is dirty at this stage, stop the self-update workflow before approval and report that the config repo must be cleaned/committed first.
+If `~/.hermes` is dirty, note it in the report for awareness but **do not block** the update. Any pending changes will be folded into the post-update bulk commit.
 
 If `hermes --version` shows a release version but `git describe` shows additional commits, report both.
 
@@ -202,10 +203,9 @@ Use this reporting structure:
 
 Keep the summary concise but concrete. Mention representative commits or changed areas, not just raw counts.
 
-Before asking for approval, explicitly confirm whether `~/.hermes` is clean.
-If it is dirty, do **not** ask for approval yet; stop and report that the config-commit cron (or an equivalent manual commit) must run first.
+Report the `~/.hermes` clean/dirty state for awareness. If dirty, mention that pending changes will be included in the post-update bulk commit.
 
-Always end phase 1 by asking for approval explicitly only when the prerequisite is satisfied. Use this exact phrase:
+Always end phase 1 by asking for approval. Use this exact phrase:
 
 ```text
 Reply: approve hermes update
@@ -230,8 +230,6 @@ git -C ~/.hermes diff --name-only
 If there are now zero commits behind, report that no update is needed and stop.
 
 If the repo is ahead/diverged, remind Bank that the built-in updater may hard-reset to `origin/main` when fast-forward is impossible, then proceed only if the approval still clearly applies.
-
-If `~/.hermes` is dirty at this point, stop and report that the prerequisite is no longer satisfied. Do **not** run `hermes update` until the config repo is clean again.
 
 ### 7. Execute `hermes update` after approval
 
@@ -280,7 +278,23 @@ Verify and report:
 - whether local changes were restored from stash
 - whether config migration ran or was skipped
 - any warnings/errors from the updater
-- whether `~/.hermes` remained clean throughout the approved update flow
+
+### 9. Bulk-commit all `~/.hermes` changes
+
+After verifying the update, commit **all** pending `~/.hermes` changes (both pre-existing dirty state and post-update changes) in a single commit.
+
+```bash
+NEW_VERSION=$(hermes --version 2>&1 | head -1)
+git -C ~/.hermes add -A
+git -C ~/.hermes commit -m "chore: update hermes to ${NEW_VERSION}"
+```
+
+Rules:
+- Use the version string from `hermes --version` in the commit message.
+- If `hermes --version` returns something like `Hermes Agent v1.2.3`, extract just the version part for the message: `chore: update hermes to v1.2.3`.
+- Stage **everything** with `git add -A` — do not cherry-pick files. The whole point is a single bulk commit.
+- If `~/.hermes` is already clean (nothing to commit), skip this step and report that no commit was needed.
+- Do **not** push automatically; only commit locally.
 
 
 ## Pitfalls
@@ -290,7 +304,8 @@ Verify and report:
 - If the local checkout is ahead/diverged, the updater may hard-reset to `origin/main` if fast-forward pull fails.
 - Dirty working tree state can trigger auto-stash + restore prompts.
 - Non-interactive execution may skip prompts differently from PTY execution; PTY is preferred when the user explicitly wants default answers honored.
-- `~/.hermes` must be clean both before approval and immediately before execution; if it becomes dirty, stop and wait for the separate config-commit workflow to clean it up.
+- `hermes update` can finish successfully even when the web UI build fails; report that as a warning, not a fatal update failure, unless the user specifically needs `hermes web`.
+- The post-update bulk commit includes **all** `~/.hermes` changes. If pre-existing uncommitted changes are mixed in, they will be attributed to the update commit — this is intentional to keep the workflow simple.
 
 ## Verification checklist
 
@@ -301,12 +316,13 @@ Before approval:
 - changes categorized
 - security review completed and labeled manual or scanned
 - current `~/.hermes` clean/dirty state reported
-- approval requested only if `~/.hermes` is clean
+- approval requested
 
 After approval:
-- prerequisite re-checked
-- updater executed only if `~/.hermes` was still clean
+- state re-checked
 - prompts handled with default/yes behavior
 - final version verified
 - final git state verified
+- if `hermes --version` stays unchanged, use `hermes status` / `git rev-list --count HEAD..origin/main` to confirm the checkout is truly up to date
+- bulk commit of all `~/.hermes` changes made with `chore: update hermes to <version>`
 - results summarized clearly

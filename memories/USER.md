@@ -22,7 +22,7 @@ For routing decisions, Bank wants Hermes to propose the best route instead of fo
 §
 Has chronic urticaria and wants lightweight help with daily symptom tracking/automation.
 §
-For approved Hermes self-updates, Hermes should auto-commit Hermes-made conflict resolutions.
+For approved Hermes self-updates, Hermes should bulk-commit all ~/.hermes changes in a single commit: `chore: update hermes to <version>`.
 §
 Bank prefers Claude Code delegation and attachable tmux sessions; no live streaming needed.
 §
