@@ -66,6 +66,7 @@ Use when deploying or modifying a self-hosted service that must survive host res
 - For new rootless Podman services in homelab-infra, create the full Ansible bundle together: `inventory/group_vars/<service>.yml`, `playbooks/<service>.yml`, `roles/<service>/defaults`, `handlers`, `meta/argument_specs.yml`, `tasks`, and any env templates. If the target user already exists, wire `rootless_user` with `rootless_user_manage: false` so the role only populates `rootless_user_facts`.
 - When using the shared `podman_quadlet` role in rootless mode, ensure generated directories/files have explicit owner/group set to the target user if the role does not already do so, otherwise systemd unit generation can succeed while the runtime cannot access the quadlet assets.
 - A LAN firewall opening is not enough if the service still binds to `127.0.0.1`; confirm the app host binding before treating UFW changes as the final fix.
+- A service can be LAN-reachable on the host yet still fail for remote browsers if the frontend is configured with `localhost` for its backend origin. Verify both the browser-facing origin and the backend bind address; `curl` from the LAN IP is not enough if client-side code rewrites requests to `http://localhost:...`.
 
 ## Practical verification checklist
 - Role validation passes in an isolated inventory/playbook.

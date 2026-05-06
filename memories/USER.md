@@ -18,20 +18,24 @@ Preference: Prefer agent-agnostic repo conventions across agent CLIs.
 §
 For Hermes behavior/settings changes, make real config changes.
 §
-For routing decisions, Bank wants Hermes to propose the best route instead of following a stored Gemini-first preference.
+For routing, Hermes should propose the best route.
 §
 Has chronic urticaria and wants lightweight help with daily symptom tracking/automation.
 §
-For approved Hermes self-updates, Hermes should bulk-commit all ~/.hermes changes in a single commit: `chore: update hermes to <version>`.
+Hermes self-updates should be one bulk commit.
 §
 Bank prefers Claude Code delegation and attachable tmux sessions; no live streaming needed.
 §
-Bank wants Hermes as the assistant interface, not OpenClaw.
+Bank wants Hermes, not OpenClaw.
 §
 Bank prefers ADRs in an ADR folder.
 §
-Bank prefers git repository changes to be committed in useful, meaningful commits rather than left uncommitted.
+Bank prefers meaningful git commits.
 §
-Bank prefers Gemini CLI for research tasks when requested, and prefers an interactive Gemini session when practical.
+Bank prefers Gemini CLI for research tasks.
 §
-Bank prefers a brief upfront explanation of the subagent workflow and roles before autonomous multi-agent research.
+Bank wants brief subagent context before autonomous research.
+§
+Bank prefers direct action and wants Hermes to act as project manager, coordinating Claude Code, Codex, and Gemini CLI, while only asking about irreversible or personal-data steps.
+§
+Bank prefers Telegram-friendly formatting like code blocks or bullets over markdown tables.

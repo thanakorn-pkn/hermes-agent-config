@@ -25,6 +25,37 @@ Delegate coding tasks to [Claude Code](https://code.claude.com/docs/en/cli-refer
 - **Version check:** `claude --version` (requires v2.x+)
 - **Update:** `claude update` or `claude upgrade`
 
+## Usage, auth, and plan checks
+
+Use these built-in probes when you need live subscription/status information:
+
+```bash
+claude -p "/usage" --output-format json
+claude -p "/cost" --output-format json
+claude auth status --text
+```
+
+Observed on this host:
+- `claude -p "/usage"` returns a human-readable line like `You are currently using your subscription to power your Claude Code usage`
+- `claude -p "/cost"` includes `total_cost_usd`, `service_tier`, and `fast_mode_state`
+- `claude auth status` confirms whether Claude is using subscription or API-key auth
+
+### Interactive quota check
+
+For quota and reset timing, use the interactive `/usage` screen in a Claude Code TUI session. On this host it shows:
+- Current session usage percentage and reset time
+- Current week usage percentage and weekly reset time
+- Whether extra usage is enabled
+
+Example flow:
+```bash
+tmux new-session -d -s claudequota -x 140 -y 40
+tmux send-keys -t claudequota 'cd /tmp && claude' Enter
+# accept the workspace trust prompt with Enter
+tmux send-keys -t claudequota Enter
+# once inside Claude, run:
+/usage
+```
 ## Two Orchestration Modes
 
 Hermes interacts with Claude Code in two fundamentally different ways. Choose based on the task.

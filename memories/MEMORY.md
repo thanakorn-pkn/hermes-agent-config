@@ -4,14 +4,20 @@ User packages installed via pnpm, not npm. User installs Python packages via uv,
 §
 RULE: Never read .env files or credential files with read_file, cat, grep, or any inspection tool. Credentials injected into the runtime environment are available for tool execution — use them, don't peek at the files. Only ask the user if a genuinely new credential is needed that isn't already available.
 §
-User's homelab-infra repo is at ~/projects/homelab-infra. Ansible commands must be run from the hosts/ subdirectory using uv run (e.g., cd ~/projects/homelab-infra/hosts && uv run ansible-playbook ...). Inventory is at hosts/inventory/. Firewall role is at hosts/roles/firewall/.
+User's homelab-infra repo is at ~/projects/homelab-infra; run Ansible from hosts/ with uv run. Inventory is in hosts/inventory/ and firewall role in hosts/roles/firewall/.
 §
 Homelab: nuc-13-pro has LAN IP 192.168.1.161. Uses k3s with Traefik reverse proxy. UFW firewall managed via Ansible homelab-infra repo. Paperclip AI installed from source at /home/tphat/projects/paperclip, instance at ~/.paperclip/instances/default/.
 §
-Paperclip preferred architecture for homelab: Postgres 17 as standalone Podman quadlet container (port 5432), app runs directly on host via systemd `pnpm dev:once`, giving access to host CLIs. On this host, `codex` and `gemini` are under `/data/pnpm` and may require `bash -ic` because non-interactive PATH can miss that dir
+Paperclip prefers Postgres 17 quadlet on 5432 and app via pnpm dev:once.
 §
-When running `pnpm dev:once` in a systemd service (non-interactive), you MUST set `Environment=npm_config_tailscale_auth=true` — otherwise Paperclip defaults to `local_trusted` mode and refuses `0.0.0.0` binding with error "local_trusted mode requires loopback host binding". This env var triggers `authenticated` mode in dev-runner.ts.
+For Paperclip `pnpm dev:once` under systemd, set `Environment=npm_config_tailscale_auth=true`; otherwise it stays in `local_trusted` mode and rejects `0.0.0.0` binding.
 §
-Mission Control is Hermes-first, solo-user, homelab-only, low-maintenance; OpenClaw is on hold. On this host, tmux-wrapped `claude -p` can hide output; prefer foreground JSON + resume.
+Mission Control is Hermes-first, solo-user, homelab-only, low-maintenance; OpenClaw is on hold. tmux-wrapped `claude -p` can hide output, so foreground JSON + resume is preferred.
 §
 The vault’s MOC files live in `30_resources/` and use the `*-moc.md` naming suffix (for example, `homelab-moc.md`); `INDEX.md` is the root registry for MOCs.
+§
+Mission Control backend origin is localhost:8000.
+§
+Codex CLI quota can be checked in the interactive TUI with `/status`; it shows 5h limit, weekly limit, reset times, and the usage page URL `https://chatgpt.com/codex/settings/usage`. On this host `codex login status` reports ChatGPT login.
+§
+Codex quota is available from ~/.codex/session logs.

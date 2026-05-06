@@ -21,6 +21,60 @@ Delegate coding tasks to [Codex](https://github.com/openai/codex) via the Hermes
 - **Must run inside a git repository** — Codex refuses to run outside one
 - Use `pty=true` in terminal calls — Codex is an interactive terminal app
 
+## Usage / auth probes
+
+Use these live checks before assuming Codex usage or billing state:
+
+```bash
+codex login status
+codex exec --json "reply with usage stats only"
+```
+
+Observed on this host:
+- `codex login status` prints `Logged in using ChatGPT`
+- `codex exec --json ...` returns a JSON usage block even when the agent reply is `Usage stats: unavailable`
+- `codex -p "/status"` is not a valid probe on this CLI and can fail with config-profile errors
+
+## Programmatic quota check (preferred)
+
+Codex session logs in `~/.codex/sessions/` contain structured `token_count` events with a `rate_limits` payload. That is the best zero-touch source for quota checks.
+
+Use the helper script:
+```bash
+python ~/.hermes/scripts/codex_quota.py --json
+```
+
+It returns:
+- `source: session-log`
+- `plan_type`
+- `primary.used_percent` / `primary.left_percent` + reset time
+- `secondary.used_percent` / `secondary.left_percent` + reset time
+- source file + event timestamp
+
+## Interactive fallback
+
+If the logs are missing or stale, use the interactive `/status` screen in a Codex TUI session. On this host it shows:
+- Account type and collaboration mode
+- Current model and permission mode
+- 5h limit remaining percentage and reset time
+- Weekly limit remaining percentage and reset time
+- A pointer to the web usage page: `https://chatgpt.com/codex/settings/usage`
+
+Example flow:
+```bash
+tmpdir=$(mktemp -d)
+git init "$tmpdir"
+tmux new-session -d -s codexquota -x 140 -y 40 "bash -ic 'cd $tmpdir && codex'"
+# accept the workspace trust prompt with Enter
+tmux send-keys -t codexquota Enter
+# once inside Codex, run:
+/status
+```
+
+Notes:
+- A temporary empty git repo is sufficient for quota/status checks.
+- `~/.hermes/scripts/codex_quota.py` is the preferred low-token path.
+- The TUI can be driven via tmux or a background PTY process if you need the interactive panel for verification.
 ## One-Shot Tasks
 
 ```
@@ -108,7 +162,7 @@ Notes:
 |------|--------|
 | `exec "prompt"` | One-shot execution, exits when done |
 | `--full-auto` | Sandboxed but auto-approves file changes in workspace |
-| `--yolo` | No sandbox, no approvals (fastest, most dangerous) |
+| `--dangerously-bypass-approvals-and-sandbox` | No sandbox, no approvals (fastest, most dangerous; current CLI flag) |
 
 ## PR Reviews
 
@@ -126,8 +180,8 @@ terminal(command="git worktree add -b fix/issue-78 /tmp/issue-78 main", workdir=
 terminal(command="git worktree add -b fix/issue-99 /tmp/issue-99 main", workdir="~/project")
 
 # Launch Codex in each
-terminal(command="codex --yolo exec 'Fix issue #78: <description>. Commit when done.'", workdir="/tmp/issue-78", background=true, pty=true)
-terminal(command="codex --yolo exec 'Fix issue #99: <description>. Commit when done.'", workdir="/tmp/issue-99", background=true, pty=true)
+terminal(command="codex --dangerously-bypass-approvals-and-sandbox exec 'Fix issue #78: <description>. Commit when done.'", workdir="/tmp/issue-78", background=true, pty=true)
+terminal(command="codex --dangerously-bypass-approvals-and-sandbox exec 'Fix issue #99: <description>. Commit when done.'", workdir="/tmp/issue-99", background=true, pty=true)
 
 # Monitor
 process(action="list")

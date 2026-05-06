@@ -20,6 +20,9 @@ Use this skill when the user explicitly asks for Gemini CLI, or when Gemini is t
 
 ## Core routing rule
 
+For live session inventory, `gemini --list-sessions` is useful and returns per-project session history.
+For quick one-shot probes, prefer `gemini -p` over interactive mode when the UI stalls or no usable text appears.
+
 Prefer an interactive Gemini session *only if* the session is likely to stay responsive and you need follow-up interaction.
 
 Use headless `-p/--prompt` mode when:
@@ -52,10 +55,17 @@ bash -ic 'cd /path/to/repo && gemini -p "your prompt here"'
 ## Practical workflow
 
 1. Read the relevant repo/docs first if needed.
-2. Start Gemini with the smallest useful prompt.
-3. Poll once or twice for a response.
-4. If the interactive session is still idle or only shows the UI shell, switch to `-p`.
-5. Ground the final answer with direct file reads or repo evidence.
+2. Prefer the official Gemini CLI changelog docs (`https://geminicli.com/docs/changelogs/`) for release/news summaries; use GitHub releases as a fallback or cross-check.
+3. Start Gemini with the smallest useful prompt.
+4. Poll once or twice for a response.
+5. If the interactive session is still idle or only shows the UI shell, switch to `-p`.
+6. Ground the final answer with direct file reads or repo output.
+
+## Extraction tips
+
+- The changelog docs page groups announcements by version, and each announcement section is often easiest to extract by locating the `h2` heading and reading the following list block.
+- If browser text snapshots are noisy or truncated, use console/DOM inspection to target the specific release heading and sibling content.
+- If search engines block or return captcha pages, skip them and go straight to the official docs or GitHub releases page.
 
 ## Pitfalls
 
