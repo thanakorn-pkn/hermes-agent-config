@@ -1,0 +1,251 @@
+{
+  "unlocks": {
+    "actually_read_the_logs": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "autonomous_avalanche": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "browser_possession": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "cache_hit_appreciator": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "claude_confidant": {
+      "evidence": null,
+      "first_tier": "Olympian",
+      "unlocked_at": 1778078566
+    },
+    "codex_conjurer": {
+      "evidence": null,
+      "first_tier": "Gold",
+      "unlocked_at": 1778078566
+    },
+    "config_surgeon": {
+      "evidence": null,
+      "first_tier": "Diamond",
+      "unlocked_at": 1778078566
+    },
+    "context_dragon": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "dependency_hell_tourist": {
+      "evidence": null,
+      "first_tier": null,
+      "unlocked_at": 1778078566
+    },
+    "docker_name_collision": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "docs_archaeologist": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "file_archaeologist": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "five_model_flight": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "forgot_the_env_var": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "gateway_dweller": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "gemini_cartographer": {
+      "evidence": null,
+      "first_tier": "Olympian",
+      "unlocked_at": 1778078566
+    },
+    "let_him_cook": {
+      "evidence": {
+        "session_id": "20260422_210524_9a4bdd23",
+        "title": "Greeting and assistance offer",
+        "value": 222
+      },
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "marathon_operator": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "memory_keeper": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "memory_palace": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "model_hopper": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "model_sommelier": {
+      "evidence": null,
+      "first_tier": "Olympian",
+      "unlocked_at": 1778078566
+    },
+    "multi_model_mage": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "night_shift_operator": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "one_character_fix": {
+      "evidence": null,
+      "first_tier": null,
+      "unlocked_at": 1778078566
+    },
+    "openrouter_enjoyer": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "patch_wizard": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "permission_denied_any_percent": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "plugin_goblin": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "port_3000_taken": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "provider_polyglot": {
+      "evidence": null,
+      "first_tier": "Diamond",
+      "unlocked_at": 1778078566
+    },
+    "rebase_acrobat": {
+      "evidence": null,
+      "first_tier": "Diamond",
+      "unlocked_at": 1778078566
+    },
+    "red_text_connoisseur": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "rollback_wizard": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "screenshot_hunter": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "skill_issue_skill_created": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "skillsmith": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "stack_trace_sommelier": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "subagent_commander": {
+      "evidence": null,
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "supposed_to_be_quick": {
+      "evidence": {
+        "session_id": "20260503_132759_0ef40c",
+        "title": "You are \"CEO\", an AI agent employee in a Paperclip-managed c...",
+        "value": 466
+      },
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "terminal_goblin": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "test_suite_tamer": {
+      "evidence": null,
+      "first_tier": "Diamond",
+      "unlocked_at": 1778078566
+    },
+    "the_fix_was_restarting": {
+      "evidence": null,
+      "first_tier": null,
+      "unlocked_at": 1778078566
+    },
+    "toolset_cartographer": {
+      "evidence": null,
+      "first_tier": "Diamond",
+      "unlocked_at": 1778078566
+    },
+    "vibe_architect": {
+      "evidence": {
+        "session_id": "cron_62baea0c1b78_20260423_010041",
+        "title": "[SYSTEM: You are running as a scheduled cron job. DELIVERY: ...",
+        "value": 387
+      },
+      "first_tier": "Copper",
+      "unlocked_at": 1778078566
+    },
+    "weekend_warrior": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    },
+    "yaml_colon_incident": {
+      "evidence": null,
+      "first_tier": "Silver",
+      "unlocked_at": 1778078566
+    }
+  }
+}

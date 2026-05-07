@@ -91,6 +91,13 @@ Named scenarios → concrete command sequences.
 
 Not every section is mandatory, but `Overview` + `When to Use` + actionable body + pitfalls are the minimum for the skill to feel like a peer.
 
+## Library shape guidance
+
+- Prefer one umbrella skill per class of work when the operations naturally belong together.
+- Keep `SKILL.md` class-level and compact; move session-specific detail, examples, and historical quirks into `references/`.
+- Use helper files (`references/`, `templates/`, `scripts/`) before creating more narrow sibling skills.
+- Split a skill only when the sub-scope is genuinely a separate class of work.
+
 ## Directory Placement
 
 ```

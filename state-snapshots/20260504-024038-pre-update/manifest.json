@@ -1,0 +1,19 @@
+{
+  "id": "20260504-024038-pre-update",
+  "timestamp": "20260504-024038",
+  "label": "pre-update",
+  "file_count": 10,
+  "total_size": 186951415,
+  "files": {
+    "state.db": 186920960,
+    "config.yaml": 11253,
+    ".env": 728,
+    "auth.json": 8587,
+    "cron/jobs.json": 8066,
+    "gateway_state.json": 580,
+    "channel_directory.json": 540,
+    "processes.json": 533,
+    "pairing/_rate_limits.json": 52,
+    "pairing/discord-pending.json": 116
+  }
+}

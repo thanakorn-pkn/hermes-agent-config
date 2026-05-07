@@ -21,3 +21,5 @@ Mission Control backend origin is localhost:8000.
 Codex CLI quota can be checked in the interactive TUI with `/status`; it shows 5h limit, weekly limit, reset times, and the usage page URL `https://chatgpt.com/codex/settings/usage`. On this host `codex login status` reports ChatGPT login.
 §
 Codex quota is available from ~/.codex/session logs.
+§
+The official Hermes dashboard deployment is a separate project from Mission Control; it should not be treated as a Mission Control feature or note.
